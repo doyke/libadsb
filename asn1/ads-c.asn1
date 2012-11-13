@@ -1,0 +1,241 @@
+PMADSCAPDUVersion1 DEFINITIONS ::=
+
+BEGIN
+
+;
+
+-- ------------------------------------------------------------------------------------------------------------------------
+-- Aircraft-generated and Ground-generated Message Choice
+-- ------------------------------------------------------------------------------------------------------------------------
+
+
+ADSAircraftPDUs ::= SEQUENCE
+{
+	timestamp							[0]	DateTimeGroup,
+	adsAircraftPdu						[1]	ADSAircraftPDU
+}
+
+ADSAircraftPDU ::= CHOICE
+{
+	aDS-report-PDU						[0]	Report,
+	aDS-accepted-PDU					[1]	Report,
+	aDS-rejected-PDU					[2]	Reject,
+	aDS-ncn-PDU						[3]	NonCompliance,
+	aDS-positive-acknowledgement-PDU		[4]	PositiveAcknowledgement,
+	aDS-cancel-positive-acknowledgement-PDU		[5]	RequestType,
+	aDS-cancel-negative-acknowledgement-PDU	[6]	CancelRejectReason,
+	aDS-provider-abort-PDU				[7]	ProviderAbortReason,
+	aDS-user-abort-PDU					[8]	UserAbortReason,
+	...
+}
+
+ADSGroundPDUs ::= SEQUENCE
+{
+	timestamp							[0]	DateTimeGroup,
+	adsGroundPdu						[1]	ADSGroundPDU
+}
+
+
+ADSGroundPDU ::= CHOICE
+{
+	aDS-cancel-all-contracts-PDU			[0]	NULL,
+	aDS-cancel-contract-PDU				[1]	CancelContract,
+	aDS-contract-PDU					[2]	ContractRequest,
+	aDS-provider-abort-PDU				[3]	ProviderAbortReason,
+	aDS-user-abort-PDU					[4]	UserAbortReason,
+	...
+}
+
+-- ------------------------------------------------------------------------------------------------------------------------
+-- Ground-generated and Aircraft-generated message components - Protocol Data Units
+-- ------------------------------------------------------------------------------------------------------------------------
+ContractRequest ::= SEQUENCE
+{
+	contract-type					[0] ContractType,
+	ic-contract-request			[1] ICContractRequest
+}
+
+ICContractRequest ::= SEQUENCE
+{
+	algorithmIdentifier			[0] AlgorithmIdentifier OPTIONAL,
+	aDSMessage					[1] ADSMessage,
+								-- PER encoded User Data ADSRequestContract
+	integrityCheck				[2] BIT STRING,
+	...
+}
+
+ICPositiveAck ::= SEQUENCE
+{
+	algorithmIdentifier			[0] AlgorithmIdentifier OPTIONAL,
+	aDSPositiveAck				[1] ADSMessage,
+								-- PER encoded User Data ADSPositiveAcknowledgement
+	integrityCheck				[2] BIT STRING,
+	…
+}
+
+PositiveAcknowledgement ::= SEQUENCE
+{
+	contract-type				[0]	ContractType,
+	ic-positive-ack			[1]	ICPositiveAck
+}
+
+
+
+Report ::= SEQUENCE
+{
+	contract-type					[0] ContractType,
+	ic-report						[1] ICReport
+}
+
+ICReport ::= SEQUENCE
+{
+	algorithmIdentifier			[0] AlgorithmIdentifier OPTIONAL,
+	aDSMessage					[1] ADSMessage,
+								-- PER encoded User Data ADSReport 
+	integrityCheck				[2] BIT STRING,
+	...
+}
+
+Reject ::= SEQUENCE
+{
+	contract-type					[0] ContractType,
+	ic-reject						[1] ICReject
+}
+
+ICReject ::= SEQUENCE
+{
+	algorithmIdentifier			[0] AlgorithmIdentifier OPTIONAL,
+	aDSMessage					[1] ADSMessage,
+								-- PER encoded User Data ADSReject
+	integrityCheck				[2] BIT STRING,
+	...
+}
+
+NonCompliance ::= SEQUENCE
+{
+	contract-type					[0] ContractType,
+	ic-ncn						[1] ICNonCompliance
+}
+
+ICNonCompliance ::= SEQUENCE
+{
+	algorithmIdentifier			[0] AlgorithmIdentifier OPTIONAL,
+	aDSMessage					[1] ADSMessage,
+								-- PER encoded User Data ADSNonCompliance
+	integrityCheck				[2] BIT STRING,
+	...
+}
+
+CancelContract ::= ENUMERATED
+{
+	event-contract 				(0),
+	periodic-contract 				(1),
+	...
+}
+
+
+AlgorithmIdentifier ::= RELATIVE-OID -- root is {icao-arc atn-algorithms(9)}
+
+ADSMessage ::= BIT STRING
+
+RequestType  ::= ENUMERATED
+{
+	cancel-event-contract 				(0),
+	cancel-periodic-contract 			(1),
+	cancel-all-contracts 				(2),
+	...
+}
+
+CancelRejectReason ::= SEQUENCE
+{
+	requestType		[0]		RequestType,
+	rejectReason		[1]		RejectReason,
+	…
+}
+
+RejectReason ::=	ENUMERATED
+{
+	no-such-contract				(0),
+	…
+}
+
+ContractType ::= ENUMERATED
+{
+	event-contract 					(0),
+	periodic-contract 					(1),
+	demand-contract 					(2)
+}
+
+ProviderAbortReason ::= ENUMERATED
+{
+	communications-service-failure 		(0),
+	unrecoverable-system-error 		(1),
+	invalid-PDU 						(2),
+	sequence-error 					(3),
+	timer-expiry 						(4),
+	cannot-establish-contact 			(5),
+	undefined-error 					(6),
+	dialogue-end-not-accepted 		(7),
+	unexpected-PDU 					(8),
+	decoding-error					(9),
+	invalid qos parameter				(10),
+	...
+}
+
+UserAbortReason ::= ENUMERATED	
+	{
+	undefined						(0),
+	unknown-integrity-check 			(1),
+	validation-failure 					(2),
+	unable-to-decode-message 		(3),
+	...
+	}
+
+DateTimeGroup ::= SEQUENCE
+{
+	date      Date,
+	time      Time
+}
+
+Date ::= SEQUENCE
+{
+	year					DateYear,
+	month					DateMonth,
+	day					DateDay
+}
+
+DateYear ::= INTEGER (1996..2095)
+	-- unit = year
+	-- Range = 1996 to 2095
+
+DateMonth ::= INTEGER (1..12)
+	-- unit = month
+	-- Range = January to December
+
+DateDay ::= INTEGER (1..31)
+	-- unit = day
+	-- Range = 1 to 31
+
+Time ::= SEQUENCE
+{
+	timeHours			[0] TimeHours,
+	timeMinutes			[1] TimeMinutes,
+	timeSeconds			[2] TimeSeconds OPTIONAL
+}
+
+TimeHours ::= INTEGER (0..23)
+	-- Unit = hours
+	-- Range = midnight to 23.00 (11 PM)
+
+TimeMinutes ::= INTEGER (0..59)
+	-- Unit = minutes
+	-- Range = 0 minutes to 59 minutes
+
+TimeSeconds ::= INTEGER (0..59)
+	-- Unit = seconds
+	-- Range = 0 seconds to 59 seconds
+
+
+END
+				
+ 

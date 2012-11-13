@@ -1,0 +1,14 @@
+Mode S receiver - gr-air-modes
+Nick Foster <bistromath@gmail.com>
+
+gr-howto-write-a-block
+Eric Blossom <eb@comsec.com>
+
+This modulator for ADS-B is based on the template for ADS-B demodulator block 
+from gr-air-modes
+
+This is a _challenge_ to boost people interest in ADS-B to start tinkering with 
+the technology and ADS-B protocol
+
+This challange and libadsb
+Andrei Costin <andrei@andreicostin.com>
