@@ -1,0 +1,27 @@
+ASN1C
+
+= Installation =
+
+sudo apt-get install asn1c
+
+= Documentation =
+http://lionet.info/asn1c/faq.html
+http://lionet.info/asn1c/blog/
+
+sample1
+    http://lionet.info/asn1c/examples.html
+    
+sample2
+    http://www.codealias.info/technotes/asn1_der_encoding_and_decoding_howto_and_example
+
+= Usage = 
+
+# Compile
+make regen -f Makefile
+make all -f Makefile
+
+# Cleanup
+#make clean -f Makefile
+#make clean-asn1c -f Makefile
+make clean-all -f Makefile
+

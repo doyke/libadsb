@@ -1,0 +1,28 @@
+-- Our MyProto specification defines a new security protocol
+-- Note that all identifiers use must start with a lowercase character
+
+MyProto {
+       iso(1) identified-organization(3) dod(6) internet(1) security(5) myproto(9)
+} DEFINITIONS ::= BEGIN
+
+
+MyPacket ::= SEQUENCE {
+        myObjectId OBJECT IDENTIFIER,
+        myInts  SEQUENCE OF MyInt,
+        myName  IA5String,
+        myFlags BIT STRING {
+                   firstFlag(0),
+                   secondFlag(1),
+                   thirdFlag(2),
+                   fourthFlag(3),
+                   fifthFlag(4),
+                   sixthFlag(5),
+                   seventhFlag(6),
+                   eighthFlag(7) }
+
+}
+
+MyInt ::= INTEGER (0..65535)
+
+END
+
